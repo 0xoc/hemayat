@@ -23,3 +23,9 @@ python manage.py migrate
 ```
 python manage.py runserver
 ```
+
+### API Documents
+you can acceess the api documents at:
+```
+http://127.0.0.1:8000/api/v1/docs/
+```
