@@ -22,6 +22,6 @@ admin.site.index_title = "Welcome to Hemayat Admin"
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('/', admin.site.urls),
+    path('', admin.site.urls),
     path('api/v1/', include('core.urls'))
 ]
