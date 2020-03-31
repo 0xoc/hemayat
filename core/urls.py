@@ -3,7 +3,7 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
-from .views import (CreateLocationView, CreateNoteView, ListLocationsView,
+from .views import (SetLocationNoteView, CreateNoteView, ListLocationsView,
                     LocaitionRUDView, LocationNotesListView, NoteRUDView)
 
 schema_view = get_schema_view(
@@ -19,14 +19,14 @@ schema_view = get_schema_view(
 urlpatterns = [
 
     # location   
-    path('location/create/', CreateLocationView.as_view()),
+    path('location/set-note/', SetLocationNoteView.as_view()),
     path('location/list/', ListLocationsView.as_view()),
-    path('location/<int:location_id>/', LocaitionRUDView.as_view()),
-    path('location/<int:location_id>/notes/list/', LocationNotesListView.as_view()),
-
-    # note
-    path('note/create/', CreateNoteView.as_view()),
-    path('note/<int:note_id>/', NoteRUDView.as_view()),
+    # path('location/<int:location_id>/', LocaitionRUDView.as_view()),
+    # path('location/<int:location_id>/notes/list/', LocationNotesListView.as_view()),
+    #
+    # # note
+    # path('note/create/', CreateNoteView.as_view()),
+    # path('note/<int:note_id>/', NoteRUDView.as_view()),
 
     # docs
     path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),

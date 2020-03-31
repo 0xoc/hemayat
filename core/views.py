@@ -70,7 +70,7 @@ class MultipleFieldLookupMixin(object):
         self.check_object_permissions(self.request, obj)
         return obj
 
-class CreateLocationView(AllowPUTAsCreateMixin, MultipleFieldLookupMixin, UpdateAPIView):
+class SetLocationNoteView(AllowPUTAsCreateMixin, MultipleFieldLookupMixin, UpdateAPIView):
     """
         Create Location
 
