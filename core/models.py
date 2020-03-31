@@ -10,17 +10,17 @@ class Location(models.Model):
         Latitude, Longitude pair with an optional name
     """
 
-    name = models.CharField(max_length=255, blank=True, null=True, help_text="Optional name for the given location")
-    lat = models.DecimalField(max_digits=22, decimal_places=16, help_text="latitude")
-    lon = models.DecimalField(max_digits=22, decimal_places=16, help_text="longitude")
+    title = models.CharField(max_length=255, blank=True, null=True, help_text="Optional name for the given location")
+    latitude = models.DecimalField(max_digits=22, decimal_places=16, help_text="latitude")
+    longitude = models.DecimalField(max_digits=22, decimal_places=16, help_text="longitude")
 
     note_text = models.TextField(help_text="Note")  # redundant for performance
 
     class Meta:
-        unique_together = ('lat', 'lon',)
+        unique_together = ('latitude', 'longitude',)
 
     def __str__(self):
-        return "%s - %d, %d" % (self.name, self.lat, self.lon)
+        return "%s - %d, %d" % (self.name, self.latitude, self.longitude)
 
 
 @receiver(post_save, sender=Location, dispatch_uid="update_stock_count")
