@@ -20,7 +20,7 @@ class Location(models.Model):
         unique_together = ('latitude', 'longitude',)
 
     def __str__(self):
-        return "%s - %d, %d" % (self.name, self.latitude, self.longitude)
+        return "%s - %d, %d" % (self.title, self.latitude, self.longitude)
 
 
 @receiver(post_save, sender=Location, dispatch_uid="update_stock_count")
