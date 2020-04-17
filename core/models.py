@@ -1,6 +1,14 @@
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.contrib.auth.models import User
+
+
+class UserProfile(models.Model):
+    """
+        Profile for a user
+    """
+    user = models.ForeignKey(User, related_name="user_profile", on_delete=models.CASCADE)
 
 
 class Location(models.Model):
@@ -13,8 +21,18 @@ class Location(models.Model):
     title = models.CharField(max_length=255, blank=True, null=True, help_text="Optional name for the given location")
     latitude = models.DecimalField(max_digits=22, decimal_places=16, help_text="latitude")
     longitude = models.DecimalField(max_digits=22, decimal_places=16, help_text="longitude")
+    
+    postal_code = models.CharField(max_length=255, blank=True, null=True)
+    pelak = models.CharField(max_length=255, blank=True, null=True)
+    sarparast = models.CharField(max_length=255, blank=True, null=True)
+    mantaqe = models.CharField(max_length=255, blank=True, null=True)
+    rabet = models.CharField(max_length=255, blank=True, null=True)
 
-    note_text = models.TextField(help_text="Note")  # redundant for performance
+    note_text = models.TextField(help_text="Note", blank=True, null=True)  # redundant for performance
+
+    @property
+    def latest_note(self) -> "Note":
+        return self.notes.last()
 
     class Meta:
         unique_together = ('latitude', 'longitude',)
@@ -44,6 +62,15 @@ class Note(models.Model):
     text = models.TextField(help_text="Note")
     location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="notes")
     timestamp = models.DateTimeField(auto_now_add=True, help_text="Create datetime of the note")
+
+    user_profile = models.ForeignKey(
+        UserProfile,
+        related_name="notes",
+        on_delete=models.PROTECT,
+        help_text="Creator of the note",
+        blank=True,
+        null=True
+    )
 
     def __str__(self):
         return "%s | %s" % (self.title, str(self.location))
