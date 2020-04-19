@@ -5,6 +5,7 @@ from rest_framework import permissions
 
 from core.v2.views import (CreateLocationView, CreateNoteView, ListLocationsView,
                     LocaitionRUDView, LocationNotesListView, NoteRUDView)
+from rest_framework.authtoken import views
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -17,7 +18,7 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-
+    path('obtain-auth-token/', views.obtain_auth_token),
     # location   
     path('location/create/', CreateLocationView.as_view()),
     path('location/list/', ListLocationsView.as_view()),
