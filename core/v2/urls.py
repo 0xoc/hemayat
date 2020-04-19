@@ -4,7 +4,7 @@ from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
 from core.v2.views import (CreateLocationView, CreateNoteView, ListLocationsView,
-                    LocaitionRUDView, LocationNotesListView, NoteRUDView)
+                           LocaitionRUDView, LocationNotesListView, NoteRUDView, SetLocationNoteView)
 from rest_framework.authtoken import views
 
 schema_view = get_schema_view(
@@ -19,7 +19,9 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('obtain-auth-token/', views.obtain_auth_token),
-    # location   
+    # location
+    path('location/set-note/', SetLocationNoteView.as_view()),
+
     path('location/create/', CreateLocationView.as_view()),
     path('location/list/', ListLocationsView.as_view()),
     path('location/<int:location_id>/', LocaitionRUDView.as_view()),
