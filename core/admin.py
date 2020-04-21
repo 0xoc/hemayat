@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Note, Location
+from .models import Note, Location, UserProfile
 
 
 class LocationAdmin(admin.ModelAdmin):
@@ -16,5 +16,6 @@ class NoteAadmin(admin.ModelAdmin):
     list_display_links = ['pk', ]
 
 
+admin.site.register(UserProfile)
 admin.site.register(Note, NoteAadmin)
 admin.site.register(Location, LocationAdmin)
