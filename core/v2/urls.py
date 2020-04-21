@@ -19,13 +19,13 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('obtain-auth-token/', views.obtain_auth_token),
-    # location
+    path('location/notes/list/', LocationNotesListView.as_view()),
     path('location/set-note/', SetLocationNoteView.as_view()),
+    # location
 
     path('location/create/', CreateLocationView.as_view()),
     path('location/list/', ListLocationsView.as_view()),
     path('location/<int:location_id>/', LocaitionRUDView.as_view()),
-    path('location/<int:location_id>/notes/list/', LocationNotesListView.as_view()),
     
     # note
     path('note/create/', CreateNoteView.as_view()),

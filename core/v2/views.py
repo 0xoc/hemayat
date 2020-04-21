@@ -3,7 +3,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.generics import (CreateAPIView, ListAPIView,
                                      RetrieveAPIView,
-                                     RetrieveUpdateDestroyAPIView, UpdateAPIView)
+                                     RetrieveUpdateDestroyAPIView, UpdateAPIView, GenericAPIView)
+from rest_framework.mixins import ListModelMixin
 from rest_framework.request import clone_request
 from rest_framework.response import Response
 
@@ -17,6 +18,7 @@ class AllowPUTAsCreateMixin(object):
     The following mixin class may be used in order to support PUT-as-create
     behavior for incoming requests.
     """
+
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object_or_none()
@@ -30,10 +32,10 @@ class AllowPUTAsCreateMixin(object):
             # extra_kwargs = {self.lookup_field: lookup_value}
             # serializer.save(**extra_kwargs)
 
-            serializer.save()
+            serializer.save(created_by=self.request.user.user_profile, updated_by=self.request.user.user_profile)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        serializer.save()
+        serializer.save(updated_by=self.request.user.user_profile)
         return Response(serializer.data)
 
     def partial_update(self, request, *args, **kwargs):
@@ -55,21 +57,24 @@ class AllowPUTAsCreateMixin(object):
                 # return a 404 response.
                 raise
 
+
 class MultipleFieldLookupMixin(object):
     """
     Apply this mixin to any view or viewset to get multiple field filtering
     based on a `lookup_fields` attribute, instead of the default single field filtering.
     """
+
     def get_object(self):
-        queryset = self.get_queryset()             # Get the base queryset
+        queryset = self.get_queryset()  # Get the base queryset
         queryset = self.filter_queryset(queryset)  # Apply any filter backends
         filter = {}
         for field in self.lookup_fields:
-            if self.get_serializer_context()['request'].data[field]: # Ignore empty fields.
+            if self.get_serializer_context()['request'].data[field]:  # Ignore empty fields.
                 filter[field] = self.get_serializer_context()['request'].data[field]
         obj = get_object_or_404(queryset, **filter)  # Lookup the object
         self.check_object_permissions(self.request, obj)
         return obj
+
 
 class SetLocationNoteView(AllowPUTAsCreateMixin, MultipleFieldLookupMixin, UpdateAPIView):
     """
@@ -119,7 +124,7 @@ class LocaitionRUDView(RetrieveUpdateDestroyAPIView):
     lookup_url_kwarg = 'location_id'
 
 
-class LocationNotesListView(ListAPIView):
+class LocationNotesListView(ListModelMixin, GenericAPIView):
     """
         List Location Notes
 
@@ -130,7 +135,13 @@ class LocationNotesListView(ListAPIView):
     serializer_class = NoteSerializer
 
     def get_queryset(self):
-        return Note.objects.filter(location__pk=self.kwargs.get('location_id')).order_by('-id')
+        return Note.objects.filter(
+            location__latitude=self.get_serializer_context()['request'].data['latitude'],
+            location__longitude=self.get_serializer_context()['request'].data['longitude']
+        ).order_by('-id')
+
+    def post(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
 
 class CreateNoteView(CreateAPIView, ):

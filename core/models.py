@@ -28,6 +28,23 @@ class Location(models.Model):
     mantaqe = models.CharField(max_length=255, blank=True, null=True)
     rabet = models.CharField(max_length=255, blank=True, null=True)
 
+    created_by = models.ForeignKey(
+        UserProfile,
+        related_name="locations",
+        on_delete=models.PROTECT,
+        help_text="Creator of the note",
+        blank=True,
+        null=True
+    )
+    updated_by = models.ForeignKey(
+        UserProfile,
+        related_name="updated_locations",
+        on_delete=models.PROTECT,
+        help_text="Creator of the note",
+        blank=True,
+        null=True
+    )
+
     note_text = models.TextField(help_text="Note", blank=True, null=True)  # redundant for performance
 
     @property
@@ -46,6 +63,7 @@ def update_stock(sender, instance, **kwargs):
     if instance.notes.exists() and instance.notes.last().text == instance.note_text:
         return
     Note.objects.create(
+        user_profile=instance.updated_by,
         location=instance,
         text=instance.note_text
     )
