@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Note, Location, UserProfile
+from .models import Note, Location, UserProfile, NoteType
 
 
 class LocationAdmin(admin.ModelAdmin):
@@ -17,5 +17,6 @@ class NoteAadmin(admin.ModelAdmin):
 
 
 admin.site.register(UserProfile)
+admin.site.register(NoteType)
 admin.site.register(Note, NoteAadmin)
 admin.site.register(Location, LocationAdmin)

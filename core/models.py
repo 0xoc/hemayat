@@ -4,6 +4,13 @@ from django.dispatch import receiver
 from django.contrib.auth.models import User
 
 
+class NoteType(models.Model):
+    title = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.title
+
+
 class UserProfile(models.Model):
     """
         Profile for a user
@@ -58,10 +65,11 @@ class Location(models.Model):
     )
 
     note_text = models.TextField(help_text="Note", blank=True, null=True)  # redundant for performance
+    note_type = models.ForeignKey(NoteType, on_delete=models.PROTECT, related_name="locations", blank=True, null=True)
 
-    @property
-    def latest_note(self) -> "Note":
-        return self.notes.last()
+    # @property
+    # def latest_note(self) -> "Note":
+    #     return self.notes.last()
 
     class Meta:
         unique_together = ('latitude', 'longitude',)
@@ -77,7 +85,8 @@ def create_note(sender, instance, **kwargs):
     Note.objects.create(
         user_profile=instance.updated_by,
         location=instance,
-        text=instance.note_text
+        text=instance.note_text,
+        note_type=instance.note_type
     )
 
 
@@ -90,6 +99,7 @@ class Note(models.Model):
 
     title = models.CharField(max_length=255, blank=True, null=True, help_text="Optional title for the note")
     text = models.TextField(help_text="Note")
+    note_type = models.ForeignKey(NoteType, on_delete=models.PROTECT, related_name="notes", blank=True, null=True)
     location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="notes")
     timestamp = models.DateTimeField(auto_now_add=True, help_text="Create datetime of the note")
 
